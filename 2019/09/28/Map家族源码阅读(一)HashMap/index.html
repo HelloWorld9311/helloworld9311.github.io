@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Map家族源码阅读(一)--HashMap | Hexo</title><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Archives</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-link" href="/tags/HashMap/">HashMap</a></div><div class="post-time">2019-09-28</div></div></div><div class="container post-header"><h1>Map家族源码阅读(一)--HashMap</h1></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HashMap源码阅读分析"><span class="toc-number">1.</span> <span class="toc-text">HashMap源码阅读分析</span></a></li></ol></details></div><div class="container post-content"><h1 id="HashMap源码阅读分析"><a href="#HashMap源码阅读分析" class="headerlink" title="HashMap源码阅读分析"></a>HashMap源码阅读分析</h1><ol>
+<li><p><strong>HashMap的变量</strong></p>
+<ul>
+<li><p><code>transient Node&lt;K,V&gt;[] table</code></p>
+<p>​        众所周知，HashMap的实现方式是内部维护了一个<strong>[数组 + 链表(红黑树)]</strong>的数据结构，这个<strong>table</strong>变量就是指向实际存储数据的数组</p>
+</li>
+<li><p><code>transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet</code></p>
+<p>​        Map遍历是Java程序员的必备技能，其中一种广为使用的遍历方法就是顶层接口提供出来的<code>Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet()</code>方法，HashMap中对entrySet()方法进行了实现，<strong>entrySet</strong>指向entrySet()方法返回值数据</p>
+<p>​        HashMap中entrySet方法源码如下（后续方法分析中会对EntrySet进行分析）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet() &#123;</span><br><span class="line">    Set&lt;Map.Entry&lt;K,V&gt;&gt; es;</span><br><span class="line">    <span class="keyword">return</span> (es = entrySet) == <span class="keyword">null</span> ? (entrySet = <span class="keyword">new</span> EntrySet()) : es;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>transient int size</code></p>
+<p>​        如变量名称所述，毫无疑问，<strong>size</strong>变量用来保存HashMap中具体元素个数</p>
+</li>
+<li><p><code>transient int modCount</code></p>
+<p>​        <strong>modCount</strong>变量用来保存对HashMap对象的修改次数</p>
+</li>
+<li><p><code>int threshold</code></p>
+<p>​        <strong>threshold</strong>变量用来保存当前HashMap的容量下，需要执行扩容的一个阈值，即HashMap对象中保存的实际元素达到该阈值时，即对HashMap对象进行扩容操作，扩容实际计算方式为：<strong>实际容量*负载因子</strong></p>
+</li>
+<li><p><code>final float loadFactor</code></p>
+<p>​        此即所谓的负载因子</p>
+</li>
+</ul>
+</li>
+<li><p><strong>HashMap的构造函数</strong></p>
+<ul>
+<li><p><code>public HashMap()</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.loadFactor = DEFAULT_LOAD_FACTOR; <span class="comment">// all other fields defaulted</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    无参构造函数，如上代码所述，仅对负载因子进行显式指定，其他属性均使用默认值。<strong>此处显式为负载因子赋值是因为在后续初始化table的时候需要使用到</strong></p>
+</li>
+<li></li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>HashMap()</li>
+<li></li>
+</ul>
+<ol start="3">
+<li></li>
+<li></li>
+</ol>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
